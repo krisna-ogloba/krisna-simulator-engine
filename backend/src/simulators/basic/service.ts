@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SimulationEngine } from '@domain/simulation.engine';
-import { SimulationConfig } from '@domain/simulation.constants';
+import { SimulationConfig } from '@shared/config/simulation.constant';
+import { SimulationEngine } from '@shared/config/simulation.engine';
 
 @Injectable()
 export class SimulationService {
