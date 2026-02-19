@@ -1,11 +1,34 @@
+import 'reflect-metadata';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { SimulationModule } from './infrastructure/simulation.module';
+import { SimulationModule } from '@simulators/basic/module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(SimulationModule);
+  const logger = new Logger('Bootstrap');
 
-  app.enableCors();
+  try {
+    const app = await NestFactory.create(SimulationModule);
 
-  await app.listen(3000);
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+
+    app.enableCors();
+
+    const port = process.env.PORT || 3000;
+    await app.listen(port);
+    logger.log(`Application successfully started on port ${port}`);
+  } catch (error) {
+    logger.error('Error during application startup', error);
+    process.exit(1);
+  }
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error('Final bootstrap failure:', err);
+  process.exit(1);
+});

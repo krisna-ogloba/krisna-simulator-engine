@@ -1,4 +1,8 @@
-// backend/eslint.config.mjs
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import globals from 'globals';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+
 export default tseslint.config(
   {
     ignores: ['eslint.config.mjs', 'dist', 'node_modules'],
@@ -12,7 +16,7 @@ export default tseslint.config(
         ...globals.node,
         ...globals.jest,
       },
-      sourceType: 'module', // Change from 'commonjs' to 'module'
+      sourceType: 'module',
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
