@@ -1,7 +1,9 @@
+import BasicSimulation from './simulators/basic';
+
 function App() {
   return (
     <>
-      <div>Simulateur Cagn'up</div>
+      <BasicSimulation />
     </>
   );
 }
