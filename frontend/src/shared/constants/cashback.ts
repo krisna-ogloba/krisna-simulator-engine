@@ -39,7 +39,7 @@ export type CashbackCategory = {
 export const DAILY_EXPENSES: CashbackCategory[] = [
   {
     id: 'food',
-    name: 'Alimentation',
+    name: 'ALIMENTATION',
     icon: Alimentation,
     partners: [
       {
@@ -64,7 +64,7 @@ export const DAILY_EXPENSES: CashbackCategory[] = [
   },
   {
     id: 'home',
-    name: 'Maison',
+    name: 'MAISON',
     icon: Maison,
     partners: [
       {
@@ -89,7 +89,7 @@ export const DAILY_EXPENSES: CashbackCategory[] = [
   },
   {
     id: 'vacation',
-    name: 'Vacances',
+    name: 'VACANCES',
     icon: Vacances,
     partners: [
       {
@@ -114,7 +114,7 @@ export const DAILY_EXPENSES: CashbackCategory[] = [
   },
   {
     id: 'mode',
-    name: 'Mode',
+    name: 'MODE',
     icon: Mode,
     partners: [
       {
@@ -139,7 +139,7 @@ export const DAILY_EXPENSES: CashbackCategory[] = [
   },
   {
     id: 'leisure',
-    name: 'Loisirs',
+    name: 'LOISIRS',
     icon: Loisirs,
     partners: [
       {

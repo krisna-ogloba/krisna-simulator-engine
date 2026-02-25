@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Input from '../ui/Input';
 
 export default function AdditionalSavings() {
+  //? Will be replaced with a proper state
   const [expenses, setExpenses] = useState(() => {
     const initialState: Record<string, number> = {};
     SAVINGS_ITEMS.forEach((item) => {
@@ -20,6 +21,7 @@ export default function AdditionalSavings() {
       [id]: value,
     }));
   };
+
   return (
     <SimulatorCard
       number={3}
@@ -55,6 +57,7 @@ export default function AdditionalSavings() {
                   onChange={(val) => handleExpenseChange(item.id, val)}
                   borderClass="border-[#EF8E61]"
                   textClass="text-[#EF8E61]"
+                  unit={'€'}
                   isMonthly={item.id === 'monthly'}
                 />
               </div>

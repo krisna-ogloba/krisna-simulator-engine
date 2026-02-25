@@ -7,6 +7,7 @@ import HandCoin from '@/assets/icons/handcoin.svg';
 import Coins from '@/assets/icons/coins.svg';
 
 export default function FixedCharges() {
+  //? Will be replaced with a proper state
   const [charges] = React.useState(FIXED_CHARGES);
   const [expenses, setExpenses] = useState(() => {
     const initialState: Record<string, number> = {};
@@ -57,6 +58,7 @@ export default function FixedCharges() {
                 <Input
                   borderClass="border-[#B560C0]"
                   textClass="text-[#B560C0]"
+                  unit="€"
                   value={expenses[charge.id]}
                   onChange={(value: number) =>
                     handleExpenseChange(charge.id, value)

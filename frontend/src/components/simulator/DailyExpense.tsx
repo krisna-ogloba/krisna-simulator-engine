@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Coins from '@/assets/icons/coins.svg';
 
 export default function DailyExpense() {
+  //? Will be replaced with a proper state
   const [expenses, setExpenses] = useState(() => {
     const initialState: Record<string, number> = {};
     DAILY_EXPENSES.forEach((cat) => {
@@ -74,6 +75,7 @@ export default function DailyExpense() {
                   textClass="text-[#006F73]"
                   value={expenses[category.id]}
                   onChange={(value) => handleExpenseChange(category.id, value)}
+                  unit={'€'}
                 />
               </div>
             </div>

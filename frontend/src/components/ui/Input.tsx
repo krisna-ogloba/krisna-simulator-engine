@@ -4,6 +4,7 @@ interface CustomInputProps {
   borderClass?: string;
   textClass?: string;
   isMonthly?: boolean;
+  unit: string; // To support "ans" or "€"
 }
 
 export default function Input({
@@ -12,13 +13,14 @@ export default function Input({
   borderClass = 'border-gray-400',
   textClass = 'text-gray-400',
   isMonthly = true,
+  unit = '€',
 }: CustomInputProps) {
   const annualValue = value * 12;
 
   return (
     <div className="flex flex-col items-center gap-1">
       <div
-        className={`flex items-centers w-25 p-2 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
+        className={`flex items-center justify-center w-25 p-2 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
       >
         <input
           type="number"
@@ -31,7 +33,11 @@ export default function Input({
         />
 
         <div className="flex items-baseline ml-1 shrink-0">
-          <span className="text-sm font-bold text-black">€</span>
+          <span
+            className={`text-sm font-bold text-black ${!isMonthly ? 'mr-3' : ''}`}
+          >
+            {unit}
+          </span>
           {isMonthly && (
             <span className="text-[10px] font-light text-black ml-0.5">
               /mois

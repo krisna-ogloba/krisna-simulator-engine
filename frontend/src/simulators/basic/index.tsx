@@ -1,6 +1,7 @@
 import DailyExpense from '../../components/simulator/DailyExpense';
 import FixedCharges from '../../components/simulator/FixedCharges';
 import AdditionalSavings from '../../components/simulator/AdditionalSavings';
+import RetirementPlan from '@/components/simulator/RetirementPlan';
 
 export default function BasicSimulation() {
   return (
@@ -18,6 +19,7 @@ export default function BasicSimulation() {
         <DailyExpense />
         <FixedCharges />
         <AdditionalSavings />
+        <RetirementPlan />
       </div>
     </div>
   );
