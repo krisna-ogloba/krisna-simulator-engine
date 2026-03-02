@@ -4,8 +4,12 @@ import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
+const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1];
+const basePath =
+  process.env.VITE_BASE_PATH || (repositoryName ? `/${repositoryName}/` : '/');
+
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+  base: basePath,
   plugins: [svgr(), react(), tailwindcss()],
   resolve: {
     alias: {
