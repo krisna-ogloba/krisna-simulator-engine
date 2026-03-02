@@ -1,26 +1,17 @@
-import { DAILY_EXPENSES } from '@/shared/constants/cashback';
-import SimulatorCard from '../ui/SimulatorCard';
-import Input from '../ui/Input';
-import { useState } from 'react';
+import { DAILY_EXPENSES } from '@/shared/constants/basic/cashback';
+import SimulatorCard from '../../ui/SimulatorCard';
+import Input from '../../ui/Input';
 import Coins from '@/assets/icons/coins.svg';
 
-export default function DailyExpense() {
-  //? Will be replaced with a proper state
-  const [expenses, setExpenses] = useState(() => {
-    const initialState: Record<string, number> = {};
-    DAILY_EXPENSES.forEach((cat) => {
-      initialState[cat.id] = 0;
-    });
-    return initialState;
-  });
+type DailyExpenseProps = {
+  expenses: Record<string, number>;
+  onChange: (id: string, value: number) => void;
+};
 
-  const handleExpenseChange = (id: string, value: number) => {
-    setExpenses((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
+export default function DailyExpense({
+  expenses,
+  onChange,
+}: DailyExpenseProps) {
   return (
     <SimulatorCard
       number={1}
@@ -51,8 +42,11 @@ export default function DailyExpense() {
                   <h4 className="text-sm">{category.name}</h4>
                   {/* Partners Badges */}
                   <div className="flex flex-wrap gap-2">
-                    {category.partners.map((partner) => (
-                      <div className="flex items-center gap-1 rounded-[10px] p-1 text-[10px] bg-white">
+                    {category.partners.map((partner, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 rounded-[10px] p-1 text-[10px] bg-white"
+                      >
                         <img
                           src={partner.icon}
                           alt={partner.name}
@@ -74,7 +68,7 @@ export default function DailyExpense() {
                   borderClass="border-[#006F73]"
                   textClass="text-[#006F73]"
                   value={expenses[category.id]}
-                  onChange={(value) => handleExpenseChange(category.id, value)}
+                  onChange={(value) => onChange(category.id, value)}
                   unit={'€'}
                 />
               </div>

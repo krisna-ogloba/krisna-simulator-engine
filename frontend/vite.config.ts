@@ -13,7 +13,7 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
       '@simulators': path.resolve(__dirname, './src/simulators'),
       '@shared': path.resolve(__dirname, './src/shared'),
+      '@ui': path.resolve(__dirname, './src/components/ui'),
     },
   },
-  base: '/krisna-simulator-engine/',
 });

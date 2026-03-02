@@ -4,7 +4,7 @@ interface CustomInputProps {
   borderClass?: string;
   textClass?: string;
   isMonthly?: boolean;
-  unit: string; // To support "ans" or "€"
+  unit: string;
 }
 
 export default function Input({

@@ -1,28 +1,21 @@
-import React, { useState } from 'react';
-import SimulatorCard from '../ui/SimulatorCard';
-import { FIXED_CHARGES } from '@/shared/constants/fixedcharge';
-import Input from '../ui/Input';
+import React from 'react';
+import SimulatorCard from '../../ui/SimulatorCard';
+import { FIXED_CHARGES } from '@/shared/constants/basic/fixedcharge';
+import Input from '../../ui/Input';
 
 import HandCoin from '@/assets/icons/handcoin.svg';
 import Coins from '@/assets/icons/coins.svg';
 
-export default function FixedCharges() {
-  //? Will be replaced with a proper state
-  const [charges] = React.useState(FIXED_CHARGES);
-  const [expenses, setExpenses] = useState(() => {
-    const initialState: Record<string, number> = {};
-    FIXED_CHARGES.forEach((cat) => {
-      initialState[cat.id] = 0;
-    });
-    return initialState;
-  });
+type FixedChargesProps = {
+  expenses: Record<string, number>;
+  onChange: (id: string, value: number) => void;
+};
 
-  const handleExpenseChange = (id: string, value: number) => {
-    setExpenses((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
+export default function FixedCharges({
+  expenses,
+  onChange,
+}: FixedChargesProps) {
+  const [charges] = React.useState(FIXED_CHARGES);
 
   return (
     <SimulatorCard
@@ -60,9 +53,7 @@ export default function FixedCharges() {
                   textClass="text-[#B560C0]"
                   unit="€"
                   value={expenses[charge.id]}
-                  onChange={(value: number) =>
-                    handleExpenseChange(charge.id, value)
-                  }
+                  onChange={(value: number) => onChange(charge.id, value)}
                 />
               </div>
             </div>

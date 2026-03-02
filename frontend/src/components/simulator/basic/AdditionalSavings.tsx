@@ -1,27 +1,18 @@
-import { SAVINGS_ITEMS } from '@/shared/constants/savingitems';
-import SimulatorCard from '../ui/SimulatorCard';
+import { SAVINGS_ITEMS } from '@/shared/constants/basic/savingitems';
+import SimulatorCard from '../../ui/SimulatorCard';
 
 import Piggybank from '@/assets/icons/piggybank.svg';
-import { useState } from 'react';
-import Input from '../ui/Input';
+import Input from '../../ui/Input';
 
-export default function AdditionalSavings() {
-  //? Will be replaced with a proper state
-  const [expenses, setExpenses] = useState(() => {
-    const initialState: Record<string, number> = {};
-    SAVINGS_ITEMS.forEach((item) => {
-      initialState[item.id] = 0;
-    });
-    return initialState;
-  });
+type AdditionalSavingsProps = {
+  expenses: Record<string, number>;
+  onChange: (id: string, value: number) => void;
+};
 
-  const handleExpenseChange = (id: string, value: number) => {
-    setExpenses((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
+export default function AdditionalSavings({
+  expenses,
+  onChange,
+}: AdditionalSavingsProps) {
   return (
     <SimulatorCard
       number={3}
@@ -54,7 +45,7 @@ export default function AdditionalSavings() {
               <div className="text-right">
                 <Input
                   value={expenses[item.id]}
-                  onChange={(val) => handleExpenseChange(item.id, val)}
+                  onChange={(val) => onChange(item.id, val)}
                   borderClass="border-[#EF8E61]"
                   textClass="text-[#EF8E61]"
                   unit={'€'}

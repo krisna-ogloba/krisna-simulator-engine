@@ -22,7 +22,7 @@ export function TabGroup({
             onClick={() => onChange(option)}
             className={`
             flex-1 min-w-0
-            p-2 rounded-md text-[10px] uppercase
+            p-2 rounded-md cursor-pointer text-[10px] uppercase
               transition-all 
               text-black 
               leading-tight wrap-break-word
