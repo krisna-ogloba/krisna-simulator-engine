@@ -29,7 +29,7 @@ export type CalculateSimulationResponse = {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://krisna-simulator-engine-production.up.railway.app',
   timeout: 10000,
 });
 
