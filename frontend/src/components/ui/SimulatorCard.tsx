@@ -36,19 +36,34 @@ export default function SimulatorCard(props: SimulatorCardProps) {
             <p className="text-xs text-gray-600">{description}</p>
           </div>
 
-          <button className="text-gray-400 hover:text-gray-600 shrink-0">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-              style={{ color: badgeColor }}
+          <div className="relative shrink-0 group">
+            <button
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Information"
+              type="button"
             >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 8v4m0 4h.01" strokeWidth={2} strokeLinecap="round" />
-            </svg>
-          </button>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+                style={{ color: badgeColor }}
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path
+                  d="M12 8v4m0 4h.01"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+
+            <div className="absolute right-6.25 -top-3.75 mt-2 w-44 rounded-md bg-white p-2 text-[11px] text-gray-700 shadow-lg border border-gray-100 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+          </div>
         </div>
 
         {/* Content */}

@@ -22,11 +22,11 @@ ChartJS.register(
 );
 
 export type RetirementChartPoint = {
-  name: string;
-  cagnotte: number;
-  economie: number;
-  contribution: number;
-  gains: number;
+  year: string;
+  cashback: number;
+  saved: number;
+  contributed: number;
+  earnings: number;
 };
 
 type BarChartProps = {
@@ -44,39 +44,37 @@ export default function BarChart({
     selectedIndex === undefined || selectedIndex === index;
 
   const data = {
-    labels: dataPoints.map((d) => d.name),
+    labels: dataPoints.map((d) => d.year),
     datasets: [
       {
         label: 'Cagnotté',
-        data: dataPoints.map((d) => d.cagnotte),
+        data: dataPoints.map((d) => d.cashback),
         backgroundColor: dataPoints.map((_, index) =>
           !isSelected(index) ? '#66A9AB' : '#6D7580',
         ),
-        borderRadius: 0,
       },
       {
         label: 'Économisé',
-        data: dataPoints.map((d) => d.economie),
+        data: dataPoints.map((d) => d.saved),
         backgroundColor: dataPoints.map((_, index) =>
           !isSelected(index) ? '#D3A0D9' : '#6D7580',
         ),
-        borderRadius: 0,
       },
       {
         label: 'Contribué',
-        data: dataPoints.map((d) => d.contribution),
+        data: dataPoints.map((d) => d.contributed),
         backgroundColor: dataPoints.map((_, index) =>
           !isSelected(index) ? '#F5BBA0' : '#6D7580',
         ),
-        borderRadius: 0,
       },
       {
         label: 'Gains',
-        data: dataPoints.map((d) => d.gains),
+        data: dataPoints.map((d) => d.earnings),
         backgroundColor: dataPoints.map((_, index) =>
           !isSelected(index) ? '#cce2e3' : '#6D7580',
         ),
         borderRadius: { topLeft: 8, topRight: 8 },
+        borderColor: '#000000',
       },
     ],
   };
@@ -98,6 +96,7 @@ export default function BarChart({
         ticks: {
           font: {
             size: 10,
+            weight: 'bold' as const,
           },
         },
       },
@@ -117,15 +116,20 @@ export default function BarChart({
         mode: 'index' as const,
         intersect: false,
         filter: (tooltipItem: TooltipItem<'bar'>) =>
-          tooltipItem.dataset.label === 'Gains',
+          tooltipItem.datasetIndex === 0,
         callbacks: {
           title: () => '',
           label: (context: TooltipItem<'bar'>) => {
-            const value = Number(context.parsed.y ?? 0);
-            return `Gains: ${value.toLocaleString()} €`;
+            const point = dataPoints[context.dataIndex];
+            const total =
+              (point?.cashback ?? 0) +
+              (point?.saved ?? 0) +
+              (point?.contributed ?? 0) +
+              (point?.earnings ?? 0);
+            return `${Math.round(total).toLocaleString('fr-FR')} €`;
           },
         },
-        displayColors: true,
+        displayColors: false,
         backgroundColor: 'white',
         titleColor: '#006D77',
         bodyColor: '#006D77',
@@ -140,7 +144,7 @@ export default function BarChart({
   };
 
   return (
-    <div style={{ width: '100%', height: '320px' }}>
+    <div style={{ width: '100%', height: '340px' }}>
       <Bar data={data} options={options} />
     </div>
   );

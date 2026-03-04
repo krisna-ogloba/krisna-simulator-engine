@@ -9,6 +9,9 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,10 +29,13 @@ jobs:
           cache-dependency-path: './frontend/pnpm-lock.yaml'
 
       - name: Install and Build
+        env:
+          VITE_BASE_PATH: /krisna-simulator-engine/
         run: |
           cd frontend
           pnpm install
           pnpm run build
+          sed -n '1,30p' dist/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

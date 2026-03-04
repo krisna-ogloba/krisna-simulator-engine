@@ -4,6 +4,7 @@ interface CustomInputProps {
   borderClass?: string;
   textClass?: string;
   isMonthly?: boolean;
+  width?: string;
   unit: string;
 }
 
@@ -14,13 +15,14 @@ export default function Input({
   textClass = 'text-gray-400',
   isMonthly = true,
   unit = '€',
+  width = 'w-25',
 }: CustomInputProps) {
   const annualValue = value * 12;
 
   return (
     <div className="flex flex-col items-center gap-1">
       <div
-        className={`flex items-center justify-center w-25 p-2 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
+        className={`flex items-center justify-center ${width} p-2 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
       >
         <input
           type="number"

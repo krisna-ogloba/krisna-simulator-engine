@@ -78,9 +78,9 @@ export default function BasicSimulation() {
           onChange={handleSavingChange}
         />
         <RetirementPlan
-          annualCagnotte={dailyAnnual}
-          annualEconomise={fixedAnnual}
-          annualContribue={savingsAnnual}
+          annualCashback={dailyAnnual}
+          annualSaved={fixedAnnual}
+          annualContributed={savingsAnnual}
         />
       </div>
     </div>

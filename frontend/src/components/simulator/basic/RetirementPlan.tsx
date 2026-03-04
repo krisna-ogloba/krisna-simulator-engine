@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TabGroup } from '../../ui/TabGroup';
 import Input from '../../ui/Input';
-import Card from '../../ui/Card';
-import StackedBarChart, { type RetirementChartPoint } from '../../ui/Chart';
-import { calculateSimulation } from '@/APIs';
+import StackedBarChart from '../../ui/Chart';
+import { calculateSimulation, type ChartDataPoint } from '@/APIs';
 import { useDebounce } from '@/shared/hooks';
 
 function InvestmentItem({
@@ -26,9 +25,9 @@ function InvestmentItem({
 }
 
 type RetirementPlanProps = {
-  annualCagnotte: number;
-  annualEconomise: number;
-  annualContribue: number;
+  annualCashback: number;
+  annualSaved: number;
+  annualContributed: number;
 };
 
 function formatEuro(value: number) {
@@ -48,23 +47,28 @@ const RISK_LEVELS = [
 ];
 
 export default function RetirementPlan({
-  annualCagnotte,
-  annualEconomise,
-  annualContribue,
+  annualCashback,
+  annualSaved,
+  annualContributed,
 }: RetirementPlanProps) {
   const [selectedNeed, setSelectedNeed] = useState(NEEDS[0]);
   const [years, setYears] = useState(21);
   const [selectedRisk, setSelectedRisk] = useState(RISK_LEVELS[0]);
-  const [earnings, setEarnings] = useState(0);
+  const [, setEarnings] = useState(0);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [selectedBarIndex, setSelectedBarIndex] = useState(0);
 
-  const totalInvested = annualCagnotte + annualEconomise + annualContribue;
+  const totalInvested = annualCashback + annualSaved + annualContributed;
   const debouncedTotalInvested = useDebounce(totalInvested, 1000);
   const debouncedYears = useDebounce(years, 500);
+  const debouncedAnnualCashback = useDebounce(annualCashback, 1000);
+  const debouncedAnnualSaved = useDebounce(annualSaved, 1000);
+  const debouncedAnnualContributed = useDebounce(annualContributed, 1000);
 
   useEffect(() => {
     if (debouncedTotalInvested <= 0 || debouncedYears <= 0) {
       setEarnings(0);
+      setChartData([]);
       return;
     }
 
@@ -77,20 +81,18 @@ export default function RetirementPlan({
           duration: debouncedYears,
           productType: selectedNeed.type,
           riskLevel: selectedRisk.level,
+          annualCashback: debouncedAnnualCashback,
+          annualSaved: debouncedAnnualSaved,
+          annualContributed: debouncedAnnualContributed,
         });
 
-        const earningsValue = Math.max(
-          0,
-          result.central - debouncedTotalInvested,
-        );
-        setEarnings(earningsValue);
+        setEarnings(result.earnings);
+        setChartData(result.chartData);
       } catch (error) {
         // Handle abort signal errors gracefully
         if (error instanceof Error && error.name === 'AbortError') {
           return;
         }
-
-        // Fallback calculation if API fails
         const fallbackRateByRisk: Record<number, number> = {
           1: 0.02,
           2: 0.03,
@@ -102,6 +104,7 @@ export default function RetirementPlan({
           debouncedTotalInvested *
           (Math.pow(1 + rate, Math.max(1, debouncedYears)) - 1);
         setEarnings(Math.max(0, fallbackEarnings));
+        setChartData([]);
       }
     };
 
@@ -114,43 +117,6 @@ export default function RetirementPlan({
     debouncedYears,
   ]);
 
-  const chartData = useMemo<RetirementChartPoint[]>(() => {
-    const points: RetirementChartPoint[] = [];
-    const currentYear = new Date().getFullYear();
-
-    let step;
-    if (debouncedYears >= 20) {
-      step = 3;
-    } else {
-      step = 2;
-    }
-
-    for (let yearOffset = 0; yearOffset <= debouncedYears; yearOffset += step) {
-      const displayYear = currentYear + yearOffset;
-      const investedYears = yearOffset;
-      const gainProgress = Math.min(
-        investedYears / Math.max(1, debouncedYears),
-        1,
-      );
-
-      points.push({
-        name: `'${displayYear.toString().slice(-2)}`,
-        cagnotte: annualCagnotte * investedYears,
-        economie: annualEconomise * investedYears,
-        contribution: annualContribue * investedYears,
-        gains: earnings * gainProgress,
-      });
-    }
-
-    return points;
-  }, [
-    annualCagnotte,
-    annualContribue,
-    annualEconomise,
-    earnings,
-    debouncedYears,
-  ]);
-
   const safeSelectedIndex = Math.min(
     selectedBarIndex,
     Math.max(chartData.length - 1, 0),
@@ -158,13 +124,16 @@ export default function RetirementPlan({
   const selectedPoint =
     chartData[safeSelectedIndex] ??
     ({
-      name: '',
-      cagnotte: 0,
-      economie: 0,
-      contribution: 0,
-      gains: 0,
+      year: '',
+      cashback: 0,
+      saved: 0,
+      contributed: 0,
+      earnings: 0,
     } as const);
-  const retirementTotal = totalInvested + earnings;
+
+  const selectedTotalInvested =
+    selectedPoint.cashback + selectedPoint.saved + selectedPoint.contributed;
+  const retirementTotal = selectedTotalInvested + selectedPoint.earnings;
 
   return (
     <div className="flex flex-col w-full max-w-2xl gap-8 mt-2">
@@ -188,8 +157,9 @@ export default function RetirementPlan({
           Dans combien d’années partez-vous à la retraite ?
         </p>
         <Input
+          width={'w-22'}
           value={years}
-          onChange={setYears}
+          onChange={(value) => setYears(Math.min(value, 50))}
           unit="ans"
           isMonthly={false}
           borderClass="border-[#F4A261]"
@@ -209,7 +179,7 @@ export default function RetirementPlan({
           activeClass="bg-[#E6F1F1]"
         />
       </div>
-      <Card className=" flex flex-col gap-4 shadow-sm border-gray-100 w-full rounded-2xl bg-white">
+      <div className="flex flex-col gap-4 w-full px-2 py-3 sm:mx-0 sm:px-4 sm:py-4 sm:shadow-sm sm:border sm:border-gray-100 sm:rounded-2xl sm:bg-white">
         {/* Title */}
         <div className="flex items-center gap-1.5">
           <h2 className="text-[16px] text-black">Mon Plan Épargne Retraite</h2>
@@ -229,12 +199,12 @@ export default function RetirementPlan({
           {/* Investissements */}
           <div className="flex-1 border rounded-xl border-gray-100 p-2 w-full">
             <p className="text-[12px] text-gray-500 font-medium mb-2">
-              Vos investissements
+              Vos investissements ({selectedPoint.year})
             </p>
 
-            <div className="flex sm:flex-row sm:items-center justify-between w-full">
+            <div className="flex sm:flex-row sm:items-center justify-around w-full">
               <InvestmentItem
-                value={formatEuro(annualCagnotte)}
+                value={formatEuro(selectedPoint.cashback)}
                 label="CAGNOTTÉ"
                 color="text-[#006D77]"
               />
@@ -242,7 +212,7 @@ export default function RetirementPlan({
               <div className="block h-6 border-r border-dashed border-gray-300" />
 
               <InvestmentItem
-                value={formatEuro(annualEconomise)}
+                value={formatEuro(selectedPoint.saved)}
                 label="ÉCONOMISÉ"
                 color="text-[#9B51E0]"
               />
@@ -250,7 +220,7 @@ export default function RetirementPlan({
               <div className="block h-6 border-r border-dashed border-gray-300" />
 
               <InvestmentItem
-                value={formatEuro(annualContribue)}
+                value={formatEuro(selectedPoint.contributed)}
                 label="CONTRIBUÉ"
                 color="text-[#F2994A]"
               />
@@ -271,7 +241,7 @@ export default function RetirementPlan({
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-[#B2D8D8]" />
               <p className="text-[12px] font-bold text-black">
-                {formatEuro(earnings)} €
+                {formatEuro(selectedPoint.earnings)} €
               </p>
             </div>
           </div>
@@ -302,12 +272,12 @@ export default function RetirementPlan({
 
         <div className="w-fit border rounded-xl border-gray-100 p-2 mx-auto">
           <p className="text-[12px] font-medium mb-2 text-center">
-            Mon Epargne Annuelle ({selectedPoint.name})
+            Mon Epargne Annuelle
           </p>
 
           <div className="flex sm:flex-row sm:items-center justify-center gap-2">
             <InvestmentItem
-              value={formatEuro(selectedPoint.cagnotte)}
+              value={formatEuro(annualCashback)}
               label="CAGNOTTÉ"
               color="text-[#006D77]"
             />
@@ -315,7 +285,7 @@ export default function RetirementPlan({
             <div className="block h-6 border-r border-dashed border-gray-300" />
 
             <InvestmentItem
-              value={formatEuro(selectedPoint.economie)}
+              value={formatEuro(annualSaved)}
               label="ÉCONOMISÉ"
               color="text-[#9B51E0]"
             />
@@ -323,13 +293,13 @@ export default function RetirementPlan({
             <div className="block h-6 border-r border-dashed border-gray-300" />
 
             <InvestmentItem
-              value={formatEuro(selectedPoint.contribution)}
+              value={formatEuro(annualContributed)}
               label="CONTRIBUÉ"
               color="text-[#F2994A]"
             />
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

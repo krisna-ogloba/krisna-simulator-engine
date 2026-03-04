@@ -20,4 +20,16 @@ export class CalculateSimulationDto {
   @IsNumber()
   @IsPositive()
   duration!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  annualCashback!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  annualSaved!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  annualContributed!: number;
 }
