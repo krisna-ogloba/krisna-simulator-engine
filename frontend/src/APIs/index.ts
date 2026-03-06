@@ -41,5 +41,7 @@ export async function calculateSimulation(
     params,
   );
 
-  return response.data;
+  return {
+    ...response.data,
+  };
 }

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { TabGroup } from '../../ui/TabGroup';
 import Input from '../../ui/Input';
+import Select from '../../ui/Select';
 import StackedBarChart from '../../ui/Chart';
 import { calculateSimulation, type ChartDataPoint } from '@/APIs';
 import { useDebounce } from '@/shared/hooks';
+import { formatEuro } from '@/shared/utils';
 
 function InvestmentItem({
   value,
@@ -16,7 +18,7 @@ function InvestmentItem({
 }) {
   return (
     <div className="flex flex-col items-center">
-      <p className={`text-[12px] font-bold ${color}`}>{value} €</p>
+      <p className={`text-[12px] font-bold ${color}`}>{value}</p>
       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
         {label}
       </p>
@@ -29,10 +31,6 @@ type RetirementPlanProps = {
   annualSaved: number;
   annualContributed: number;
 };
-
-function formatEuro(value: number) {
-  return Math.round(value).toLocaleString('fr-FR');
-}
 
 const NEEDS = [
   { name: 'PRÉPARER MA RETRAITE', type: 'life_insurance' as const },
@@ -163,6 +161,8 @@ export default function RetirementPlan({
   const selectedTotalInvested =
     selectedPoint.cashback + selectedPoint.saved + selectedPoint.contributed;
   const retirementTotal = selectedTotalInvested + selectedPoint.earnings;
+  const selectedYearLabel =
+    selectedPoint.year || `Année ${safeSelectedIndex + 1}`;
 
   return (
     <div className="flex flex-col w-full max-w-2xl gap-8 mt-2">
@@ -225,31 +225,20 @@ export default function RetirementPlan({
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
           <p className="text-[12px] text-gray-500">Choisir une année</p>
-          <select
-            className="h-8 rounded-lg border border-gray-200 px-2 text-[12px] text-gray-700"
+          <Select
             value={safeSelectedIndex}
-            onChange={(event) =>
-              setSelectedBarIndex(Number(event.target.value))
-            }
+            options={yearOptions}
+            onChange={(value) => setSelectedBarIndex(Number(value))}
             disabled={yearOptions.length === 0}
-          >
-            {yearOptions.length === 0 ? (
-              <option value={0}>Aucune année</option>
-            ) : (
-              yearOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))
-            )}
-          </select>
+            placeholder="Aucune année"
+          />
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-around gap-1 w-full">
           {/* Investissements */}
           <div className="flex-1 border rounded-xl border-gray-100 p-2 w-full">
             <p className="text-[12px] text-gray-500 font-medium mb-2">
-              Vos investissements ({selectedPoint.year})
+              Vos investissements ({selectedYearLabel})
             </p>
 
             <div className="flex sm:flex-row sm:items-center justify-between w-full">
@@ -277,7 +266,7 @@ export default function RetirementPlan({
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center">
             <span className="rounded-full w-6 h-6 flex items-center justify-center bg-white border text-gray-300 text-sm">
               +
             </span>
@@ -291,7 +280,7 @@ export default function RetirementPlan({
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full bg-[#B2D8D8]" />
               <p className="text-[12px] font-bold text-black">
-                {formatEuro(selectedPoint.earnings)} €
+                {formatEuro(selectedPoint.earnings)}
               </p>
             </div>
           </div>
@@ -309,7 +298,7 @@ export default function RetirementPlan({
             </p>
 
             <p className="text-[12px] font-bold text-[#006D77]">
-              {formatEuro(retirementTotal)} €
+              {formatEuro(retirementTotal)}
             </p>
           </div>
         </div>

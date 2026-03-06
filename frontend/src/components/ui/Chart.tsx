@@ -12,6 +12,7 @@ import {
 } from 'chart.js';
 import { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { formatEuro } from '@/shared/utils';
 
 ChartJS.register(
   CategoryScale,
@@ -41,6 +42,17 @@ export default function BarChart({
   selectedIndex,
   onBarClick,
 }: BarChartProps) {
+  const formatChartYear = (year: string, index: number) => {
+    if (!year) return `Année ${index + 1}`;
+
+    const digitsOnly = year.replace(/\D/g, '');
+    if (digitsOnly.length >= 2) {
+      return `'${digitsOnly.slice(-2)}`;
+    }
+
+    return year;
+  };
+
   const isSelected = (index: number) =>
     selectedIndex === undefined || selectedIndex === index;
 
@@ -57,7 +69,7 @@ export default function BarChart({
   };
 
   const data = {
-    labels: dataPoints.map((d) => d.year),
+    labels: dataPoints.map((d, index) => formatChartYear(d.year, index)),
     datasets: [
       {
         label: 'Cagnotté',
@@ -147,7 +159,7 @@ export default function BarChart({
               (point?.saved ?? 0) +
               (point?.contributed ?? 0) +
               (point?.earnings ?? 0);
-            return `${Math.round(total).toLocaleString('fr-FR')} €`;
+            return formatEuro(total);
           },
         },
         displayColors: false,
@@ -156,10 +168,13 @@ export default function BarChart({
         bodyColor: '#006D77',
         borderColor: '#E5E7EB',
         borderWidth: 2,
-        padding: 4,
+        padding: 10,
+        cornerRadius: 12,
         bodyFont: {
-          size: 13,
+          size: 16,
+          weight: 'bold' as const,
         },
+        caretSize: 8,
       },
     },
   };

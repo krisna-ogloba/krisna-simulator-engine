@@ -34,7 +34,7 @@ export class SimulationEngine {
       const gainProgress = Math.min(investedYears / Math.max(1, duration), 1);
 
       points.push({
-        year: `'${displayYear.toString().slice(-2)}`,
+        year: displayYear.toString(),
         cashback: annualCashback * investedYears,
         saved: annualSaved * investedYears,
         contributed: annualContributed * investedYears,
