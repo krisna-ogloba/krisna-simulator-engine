@@ -10,6 +10,7 @@ import {
   type ActiveElement,
   type ChartEvent,
 } from 'chart.js';
+import { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
@@ -43,6 +44,18 @@ export default function BarChart({
   const isSelected = (index: number) =>
     selectedIndex === undefined || selectedIndex === index;
 
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const selectedStackColor = '#6D7580';
+
+  const resolveStackColor = (index: number, defaultColor: string) => {
+    if (hoveredIndex !== null) {
+      return hoveredIndex === index ? selectedStackColor : defaultColor;
+    }
+
+    return isSelected(index) ? selectedStackColor : defaultColor;
+  };
+
   const data = {
     labels: dataPoints.map((d) => d.year),
     datasets: [
@@ -50,29 +63,33 @@ export default function BarChart({
         label: 'Cagnotté',
         data: dataPoints.map((d) => d.cashback),
         backgroundColor: dataPoints.map((_, index) =>
-          !isSelected(index) ? '#66A9AB' : '#6D7580',
+          resolveStackColor(index, '#66A9AB'),
         ),
+        hoverBackgroundColor: '#6D7580',
       },
       {
         label: 'Économisé',
         data: dataPoints.map((d) => d.saved),
         backgroundColor: dataPoints.map((_, index) =>
-          !isSelected(index) ? '#D3A0D9' : '#6D7580',
+          resolveStackColor(index, '#D3A0D9'),
         ),
+        hoverBackgroundColor: '#6D7580',
       },
       {
         label: 'Contribué',
         data: dataPoints.map((d) => d.contributed),
         backgroundColor: dataPoints.map((_, index) =>
-          !isSelected(index) ? '#F5BBA0' : '#6D7580',
+          resolveStackColor(index, '#F5BBA0'),
         ),
+        hoverBackgroundColor: '#6D7580',
       },
       {
         label: 'Gains',
         data: dataPoints.map((d) => d.earnings),
         backgroundColor: dataPoints.map((_, index) =>
-          !isSelected(index) ? '#cce2e3' : '#6D7580',
+          resolveStackColor(index, '#cce2e3'),
         ),
+        hoverBackgroundColor: '#6D7580',
         borderRadius: { topLeft: 8, topRight: 8 },
         borderColor: '#000000',
       },
@@ -86,6 +103,10 @@ export default function BarChart({
       const firstElement = elements[0];
       if (!firstElement) return;
       onBarClick?.(firstElement.index);
+    },
+    onHover: (_event: ChartEvent, elements: ActiveElement[]) => {
+      const firstElement = elements[0];
+      setHoveredIndex(firstElement ? firstElement.index : null);
     },
     scales: {
       x: {

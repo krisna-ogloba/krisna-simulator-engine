@@ -34,33 +34,33 @@ export default function DailyExpense({
           >
             {/* Category Header */}
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3 flex-1">
-                <div className="w-14 h-14 rounded-lg flex items-center justify-center text-lg shrink-0">
+              <div className="flex flex-col justify-start gap-3 flex-1">
+                <div className="w-14 h-14 rounded-lg flex gap-2 items-center text-lg shrink-0">
                   <img src={category.icon} alt={category.name} />
-                </div>
-                <div>
                   <h4 className="text-sm">{category.name}</h4>
-                  {/* Partners Badges */}
-                  <div className="flex flex-wrap gap-2">
-                    {category.partners.map((partner, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 rounded-[10px] p-1 text-[10px] bg-white"
-                      >
-                        <img
-                          src={partner.icon}
-                          alt={partner.name}
-                          className="w-6 h-6"
-                        />
-                        <div className="flex flex-col">
-                          <p className="font-bold">{partner.name}</p>
-                          <div className="bg-[#E6F1F1] w-fit p-0.5 rounded-lg font-bold text-[#006F73]">
-                            <p>{partner.percentage}%</p>
-                          </div>
+                </div>
+                {/* Partners Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {category.partners.map((partner, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-1.5 rounded-[10px] p-1 text-[10px] bg-white"
+                    >
+                      <img
+                        src={partner.icon}
+                        alt={partner.name}
+                        className="w-7.5 h-7.5"
+                      />
+                      <div className="flex flex-col gap-0.75">
+                        <p className="font-semibold text-[10px]">
+                          {partner.name}
+                        </p>
+                        <div className="bg-[#E6F1F1] text-[10px] w-fit p-0.5 rounded-lg font-bold text-[#006F73]">
+                          <p>{partner.percentage}%</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className="text-right ">

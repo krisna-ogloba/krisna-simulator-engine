@@ -58,7 +58,7 @@ export default function BasicSimulation() {
       {/* Header */}
       <div className="flex flex-col items-center gap-2 mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Simulateur Cagn'up</h1>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-black">
           Découvrez combien vous pourriez épargner (presque) sans effort
         </p>
       </div>

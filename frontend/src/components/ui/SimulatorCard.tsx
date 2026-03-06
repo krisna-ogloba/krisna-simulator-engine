@@ -33,7 +33,7 @@ export default function SimulatorCard(props: SimulatorCardProps) {
 
           <div className="flex flex-col w-full gap-1">
             <h3 className="font-bold text-base text-gray-900">{title}</h3>
-            <p className="text-xs text-gray-600">{description}</p>
+            <p className="text-xs font-medium text-gray-600">{description}</p>
           </div>
 
           <div className="relative shrink-0 group">

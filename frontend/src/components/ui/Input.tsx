@@ -15,41 +15,45 @@ export default function Input({
   textClass = 'text-gray-400',
   isMonthly = true,
   unit = '€',
-  width = 'w-25',
 }: CustomInputProps) {
   const annualValue = value * 12;
+  const displayValue = value === 0 ? '' : value.toString();
 
   return (
     <div className="flex flex-col items-center gap-1">
       <div
-        className={`flex items-center justify-center ${width} p-2 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
+        className={`flex items-center min-w-fit p-1 rounded-lg border-2 bg-white shadow-sm transition-all ${borderClass}`}
       >
-        <input
-          type="number"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          value={value === 0 ? '' : value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          placeholder="0"
-          className="w-full text-sm font-bold text-black outline-none bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-0"
-        />
+        <div className="relative flex items-center w-full">
+          <span className="invisible whitespace-pre font-bold text-[16px] px-1">
+            {displayValue || '0'}
+          </span>
 
-        <div className="flex items-baseline ml-1 shrink-0">
+          <input
+            type="number"
+            inputMode="numeric"
+            value={value === 0 ? '' : value}
+            onChange={(e) => onChange(Number(e.target.value))}
+            placeholder="0"
+            className="absolute inset-0 w-full font-bold text-[16px] text-black outline-none bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-0"
+          />
+        </div>
+
+        <div className="flex items-center ml-1 shrink-0">
           <span
-            className={`text-sm font-bold text-black ${!isMonthly ? 'mr-3' : ''}`}
+            className={`text-[16px] font-bold text-black ${!isMonthly ? 'mr-2' : ''}`}
           >
             {unit}
           </span>
           {isMonthly && (
-            <span className="text-[10px] font-light text-black ml-0.5">
+            <span className="text-[12px] font-light text-black ml-0.5 mr-2">
               /mois
             </span>
           )}
         </div>
       </div>
-
       {isMonthly && (
-        <p className={`${textClass} font-medium text-[10px] italic`}>
+        <p className={`${textClass} font-medium text-[10px] italic pr-2`}>
           soit {annualValue}€/an
         </p>
       )}

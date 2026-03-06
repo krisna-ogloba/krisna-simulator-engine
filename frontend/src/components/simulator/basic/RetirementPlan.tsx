@@ -117,10 +117,39 @@ export default function RetirementPlan({
     debouncedYears,
   ]);
 
+  useEffect(() => {
+    if (chartData.length === 0) {
+      setSelectedBarIndex(0);
+      return;
+    }
+
+    let maxIndex = 0;
+    let maxTotal = -Infinity;
+
+    chartData.forEach((point, index) => {
+      const total =
+        (point.cashback ?? 0) +
+        (point.saved ?? 0) +
+        (point.contributed ?? 0) +
+        (point.earnings ?? 0);
+
+      if (total > maxTotal) {
+        maxTotal = total;
+        maxIndex = index;
+      }
+    });
+
+    setSelectedBarIndex(maxIndex);
+  }, [chartData]);
+
   const safeSelectedIndex = Math.min(
     selectedBarIndex,
     Math.max(chartData.length - 1, 0),
   );
+  const yearOptions = chartData.map((point, index) => ({
+    label: point.year || `Année ${index + 1}`,
+    value: index,
+  }));
   const selectedPoint =
     chartData[safeSelectedIndex] ??
     ({
@@ -157,7 +186,6 @@ export default function RetirementPlan({
           Dans combien d’années partez-vous à la retraite ?
         </p>
         <Input
-          width={'w-22'}
           value={years}
           onChange={(value) => setYears(Math.min(value, 50))}
           unit="ans"
@@ -195,6 +223,28 @@ export default function RetirementPlan({
           </svg>
         </div>
 
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+          <p className="text-[12px] text-gray-500">Choisir une année</p>
+          <select
+            className="h-8 rounded-lg border border-gray-200 px-2 text-[12px] text-gray-700"
+            value={safeSelectedIndex}
+            onChange={(event) =>
+              setSelectedBarIndex(Number(event.target.value))
+            }
+            disabled={yearOptions.length === 0}
+          >
+            {yearOptions.length === 0 ? (
+              <option value={0}>Aucune année</option>
+            ) : (
+              yearOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-around gap-1 w-full">
           {/* Investissements */}
           <div className="flex-1 border rounded-xl border-gray-100 p-2 w-full">
@@ -202,7 +252,7 @@ export default function RetirementPlan({
               Vos investissements ({selectedPoint.year})
             </p>
 
-            <div className="flex sm:flex-row sm:items-center justify-around w-full">
+            <div className="flex sm:flex-row sm:items-center justify-between w-full">
               <InvestmentItem
                 value={formatEuro(selectedPoint.cashback)}
                 label="CAGNOTTÉ"
